@@ -194,19 +194,22 @@ open TotallyOrdered
 
 variable {F : Type u} [OrderedField F]
 
+theorem square_is_positive (x : F) : 0 <= x * x := by
+  cases totality_law 0 x
+  . have H : 0 <= x := by assumption
+    exact mul_order_law H H
+  . have H : x <= 0 := by assumption
+    have lem : 0 <= -x := calc (0 : F)
+      _ = x + -x := by rw [inverse_law]
+      _ <= 0 + -x := add_order_law H (-x)
+      _ = -x + 0 := by rw [commutative_law]
+      _ = -x := by rw [identity_law]
+    rw [<- neg_neg_mul_law]
+    exact mul_order_law lem lem
+
 theorem one_is_positive : (0 : F) <= (1 : F) := by
-  cases totality_law (0 : F) (1 : F)
-  . assumption
-  . have H : (1 : F) <= (0 : F) := by assumption
-    have lem1 : (-1 : F) * (-1 : F) = (1 : F) := by
-      rw [neg_neg_mul_law, left_identity_law]
-    have lem2 : (0 : F) <= (-1 : F) := calc (0 : F)
-      _ = 1 + -1 := by rw [inverse_law]
-      _ <= 0 + -1 := add_order_law H (-1)
-      _ = -1 + 0 := by rw [commutative_law]
-      _ = -1     := by rw [identity_law]
-    rw [<- lem1]
-    exact mul_order_law lem2 lem2
+  rw [<- left_identity_law 1]
+  exact square_is_positive 1
 
 end OrderedField
 
