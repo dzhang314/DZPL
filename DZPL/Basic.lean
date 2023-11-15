@@ -97,6 +97,22 @@ class Field (F : Type u) extends CommutativeRing F, HasInv F where
   mul_inverse_law (x : F) : (x ≠ 0) -> x * x⁻¹ = 1
   inverse_zero_law : (0 : F)⁻¹ = 0
 
+--------------------------------------------------------------------------------
+
+class PartiallyOrdered (P : Type u) extends LE P where
+  reflexive_law (x : P) : x <= x
+  antisymmetry_law (x y : P) : x <= y -> y <= x -> x = y
+  transitive_law (x y z : P) : x <= y -> y <= z -> x <= z
+
+class TotallyOrdered (T : Type u) extends PartiallyOrdered T where
+  totality_law (x y : T) : (x <= y) ∨ (y <= x)
+
+class OrderedField (F : Type u) extends Field F, TotallyOrdered F where
+  additive_law (x y z : F) : x <= y -> x + z <= y + z
+  product_law (x y : F) : 0 <= x -> 0 <= y -> 0 <= x * y
+
+--------------------------------------------------------------------------------
+
 class DifferentialRing (R : Type u) extends Ring R where
   δ : R -> R
   additive_law (x y : R) : δ (x + y) = δ x + δ y
