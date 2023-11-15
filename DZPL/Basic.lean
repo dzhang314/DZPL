@@ -143,6 +143,25 @@ class Ring (R : Type u) extends Rng R, HasOne R where
   left_identity_law (x : R) : 1 * x = x
   right_identity_law (x : R) : x * 1 = x
 
+--------------------------------------------------------------------------------
+
+namespace Ring
+
+open Rng
+
+variable {R : Type u} [Ring R]
+
+theorem collapse_law : (0 : R) = (1 : R) -> ∀ x : R, x = 0 := by
+  intro H x
+  calc x
+    _ = 1 * x := by rw [left_identity_law]
+    _ = 0 * x := by rw [H]
+    _ = 0     := by rw [left_zero_mul_law]
+
+end Ring
+
+--------------------------------------------------------------------------------
+
 class CommutativeRing (R : Type u) extends Ring R where
   mul_commutative_law (x y : R) : x * y = y * x
 
@@ -164,6 +183,8 @@ class OrderedField (F : Type u) extends Field F, TotallyOrdered F where
   add_order_law {x y : F} (H : x <= y) (z : F) : x + z <= y + z
   mul_order_law {x y : F} : 0 <= x -> 0 <= y -> 0 <= x * y
 
+--------------------------------------------------------------------------------
+
 namespace OrderedField
 
 open AbelianGroup
@@ -176,12 +197,12 @@ variable {F : Type u} [OrderedField F]
 theorem one_is_positive : (0 : F) <= (1 : F) := by
   cases totality_law (0 : F) (1 : F)
   . assumption
-  . have H : (1 : F) ≤ (0 : F) := by assumption
+  . have H : (1 : F) <= (0 : F) := by assumption
     have lem1 : (-1 : F) * (-1 : F) = (1 : F) := by
       rw [neg_neg_mul_law, left_identity_law]
-    have lem2 : (0 : F) ≤ (-1 : F) := calc (0 : F)
+    have lem2 : (0 : F) <= (-1 : F) := calc (0 : F)
       _ = 1 + -1 := by rw [inverse_law]
-      _ ≤ 0 + -1 := add_order_law H (-1)
+      _ <= 0 + -1 := add_order_law H (-1)
       _ = -1 + 0 := by rw [commutative_law]
       _ = -1     := by rw [identity_law]
     rw [<- lem1]
