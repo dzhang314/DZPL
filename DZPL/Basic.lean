@@ -200,10 +200,10 @@ theorem square_is_positive (x : F) : 0 <= x * x := by
     exact mul_order_law H H
   . have H : x <= 0 := by assumption
     have lem : 0 <= -x := calc (0 : F)
-      _ = x + -x := by rw [inverse_law]
+      _ = x + -x  := by rw [inverse_law]
       _ <= 0 + -x := add_order_law H (-x)
-      _ = -x + 0 := by rw [commutative_law]
-      _ = -x := by rw [identity_law]
+      _ = -x + 0  := by rw [commutative_law]
+      _ = -x      := by rw [identity_law]
     rw [<- neg_neg_mul_law]
     exact mul_order_law lem lem
 
