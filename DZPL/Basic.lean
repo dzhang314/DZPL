@@ -70,12 +70,26 @@ namespace AbelianGroup
 
 variable {G : Type u} [AbelianGroup G]
 
-theorem idempotent_is_identity {g : G} (H : g + g = g) : g = 0 := calc g
-  _ = g + 0        := by rw [identity_law]
-  _ = g + (g + -g) := by rw [inverse_law]
-  _ = (g + g) + -g := by rw [associative_law]
-  _ = g + -g       := by rw [H]
+theorem idempotent_is_zero {x : G} (H : x + x = x) : x = 0 := calc x
+  _ = x + 0        := by rw [identity_law]
+  _ = x + (x + -x) := by rw [inverse_law]
+  _ = (x + x) + -x := by rw [associative_law]
+  _ = x + -x       := by rw [H]
   _ = 0            := by rw [inverse_law]
+
+theorem sum_zero_implies_inverse {x y : G} (H : x + y = 0) : y = -x := calc y
+  _ = y + 0        := by rw [identity_law]
+  _ = y + (x + -x) := by rw [inverse_law]
+  _ = (y + x) + -x := by rw [associative_law]
+  _ = (x + y) + -x := by rw [commutative_law x y]
+  _ = 0 + -x       := by rw [H]
+  _ = -x + 0       := by rw [commutative_law]
+  _ = -x           := by rw [identity_law]
+
+theorem neg_is_involution (x : G) : -(-x) = x :=
+  Eq.symm <| sum_zero_implies_inverse <| calc -x + x
+    _ = x + -x := by rw [commutative_law]
+    _ = 0 := by rw [inverse_law]
 
 end AbelianGroup
 
@@ -85,6 +99,45 @@ class Rng (R : Type u) extends AbelianGroup R, Mul R where
   mul_associative_law (x y z : R) : (x * y) * z = x * (y * z)
   left_distributive_law (x y z : R) : x * (y + z) = x * y + x * z
   right_distributive_law (x y z : R) : (x + y) * z = x * z + y * z
+
+--------------------------------------------------------------------------------
+
+namespace Rng
+
+open AbelianGroup
+
+variable {R : Type u} [Rng R]
+
+theorem left_zero_mul_law (x : R) : 0 * x = 0 :=
+  idempotent_is_zero <| calc 0 * x + 0 * x
+    _ = (0 + 0) * x := by rw [right_distributive_law]
+    _ = 0 * x       := by rw [identity_law]
+
+theorem right_zero_mul_law (x : R) : x * 0 = 0 :=
+  idempotent_is_zero <| calc x * 0 + x * 0
+    _ = x * (0 + 0) := by rw [left_distributive_law]
+    _ = x * 0       := by rw [identity_law]
+
+theorem left_neg_mul_law (x y : R) : -x * y = -(x * y) :=
+  sum_zero_implies_inverse <| calc x * y + -x * y
+    _ = (x + -x) * y := by rw [right_distributive_law]
+    _ = 0 * y        := by rw [inverse_law]
+    _ = 0            := by rw [left_zero_mul_law]
+
+theorem right_neg_mul_law (x y : R) : x * -y = -(x * y) :=
+  sum_zero_implies_inverse <| calc x * y + x * -y
+    _ = x * (y + -y) := by rw [left_distributive_law]
+    _ = x * 0        := by rw [inverse_law]
+    _ = 0            := by rw [right_zero_mul_law]
+
+theorem neg_neg_mul_law (x y : R) : -x * -y = x * y := calc -x * -y
+  _ = -(x * -y)  := by rw [left_neg_mul_law]
+  _ = - -(x * y) := by rw [right_neg_mul_law]
+  _ = x * y      := by rw [neg_is_involution]
+
+end Rng
+
+--------------------------------------------------------------------------------
 
 class Ring (R : Type u) extends Rng R, HasOne R where
   left_identity_law (x : R) : 1 * x = x
@@ -108,8 +161,33 @@ class TotallyOrdered (T : Type u) extends PartiallyOrdered T where
   totality_law (x y : T) : (x <= y) ∨ (y <= x)
 
 class OrderedField (F : Type u) extends Field F, TotallyOrdered F where
-  additive_law (x y z : F) : x <= y -> x + z <= y + z
-  product_law (x y : F) : 0 <= x -> 0 <= y -> 0 <= x * y
+  add_order_law {x y : F} (H : x <= y) (z : F) : x + z <= y + z
+  mul_order_law {x y : F} : 0 <= x -> 0 <= y -> 0 <= x * y
+
+namespace OrderedField
+
+open AbelianGroup
+open Rng
+open Ring
+open TotallyOrdered
+
+variable {F : Type u} [OrderedField F]
+
+theorem one_is_positive : (0 : F) <= (1 : F) := by
+  cases totality_law (0 : F) (1 : F)
+  . assumption
+  . have H : (1 : F) ≤ (0 : F) := by assumption
+    have lem1 : (-1 : F) * (-1 : F) = (1 : F) := by
+      rw [neg_neg_mul_law, left_identity_law]
+    have lem2 : (0 : F) ≤ (-1 : F) := calc (0 : F)
+      _ = 1 + -1 := by rw [inverse_law]
+      _ ≤ 0 + -1 := add_order_law H (-1)
+      _ = -1 + 0 := by rw [commutative_law]
+      _ = -1     := by rw [identity_law]
+    rw [<- lem1]
+    exact mul_order_law lem2 lem2
+
+end OrderedField
 
 --------------------------------------------------------------------------------
 
@@ -130,12 +208,12 @@ variable {R : Type u} [DifferentialRing R]
 def IsConstant (x : R) := δ x = 0
 
 theorem zero_is_constant : IsConstant (0 : R) :=
-  idempotent_is_identity <| calc δ (0 : R) + δ (0 : R)
+  idempotent_is_zero <| calc δ (0 : R) + δ (0 : R)
     _ = δ ((0 : R) + (0 : R)) := by rw [additive_law]
     _ = δ (0 : R)             := by rw [identity_law]
 
 theorem one_is_constant : IsConstant (1 : R) :=
-  idempotent_is_identity <| calc δ (1 : R) + δ (1 : R)
+  idempotent_is_zero <| calc δ (1 : R) + δ (1 : R)
     _ = δ (1 : R) * 1 + δ (1 : R)     := by rw [right_identity_law]
     _ = δ (1 : R) * 1 + 1 * δ (1 : R) := by rw [left_identity_law]
     _ = δ ((1 : R) * (1 : R))         := by rw [product_law]
