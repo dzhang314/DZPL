@@ -10,7 +10,7 @@ class HasZero (T : Type u) where
 class HasOne (T : Type u) where
   one : T
 
-class Inv (T : Type u) where
+class HasInv (T : Type u) where
   inv : T -> T
 
 instance (T : Type u) [HasZero T] : OfNat T 0 where
@@ -19,11 +19,11 @@ instance (T : Type u) [HasZero T] : OfNat T 0 where
 instance (T : Type u) [HasOne T] : OfNat T 1 where
   ofNat := HasOne.one
 
-postfix:max "⁻¹" => Inv.inv
+postfix:max "⁻¹" => HasInv.inv
 
 --------------------------------------------------------------------------------
 
-class Group (G : Type u) extends Mul G, HasOne G, Inv G where
+class Group (G : Type u) extends Mul G, HasOne G, HasInv G where
   associative_law (x y z : G) : (x * y) * z = x * (y * z)
   left_identity_law (x : G) : 1 * x = x
   left_inverse_law (x : G) : x⁻¹ * x = 1
@@ -59,6 +59,7 @@ end Group
 --------------------------------------------------------------------------------
 
 class AbelianGroup (G : Type u) extends Add G, HasZero G, Neg G where
+  commutative_law (x y : G) : x + y = y + x
   associative_law (x y z : G) : (x + y) + z = x + (y + z)
   identity_law (x : G) : x + 0 = x
   inverse_law (x : G) : x + -x = 0
@@ -88,6 +89,13 @@ class Rng (R : Type u) extends AbelianGroup R, Mul R where
 class Ring (R : Type u) extends Rng R, HasOne R where
   left_identity_law (x : R) : 1 * x = x
   right_identity_law (x : R) : x * 1 = x
+
+class CommutativeRing (R : Type u) extends Ring R where
+  mul_commutative_law (x y : R) : x * y = y * x
+
+class Field (F : Type u) extends CommutativeRing F, HasInv F where
+  mul_inverse_law (x : F) : (x ≠ 0) -> x * x⁻¹ = 1
+  inverse_zero_law : (0 : F)⁻¹ = 0
 
 class DifferentialRing (R : Type u) extends Ring R where
   δ : R -> R
