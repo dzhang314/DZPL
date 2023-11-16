@@ -1,5 +1,9 @@
 import DZPL.Notation
 
+set_option autoImplicit false
+
+universe u
+
 class Group (G : Type u) extends Mul G, HasOne G, HasInv G where
   associative_law (x y z : G) : (x * y) * z = x * (y * z)
   left_identity_law (x : G) : 1 * x = x
