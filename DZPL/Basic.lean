@@ -1,60 +1,8 @@
+import DZPL.Notation
+
 set_option autoImplicit false
 
-universe u
-
---------------------------------------------------------------------------------
-
-class HasZero (T : Type u) where
-  zero : T
-
-class HasOne (T : Type u) where
-  one : T
-
-class HasInv (T : Type u) where
-  inv : T -> T
-
-instance (T : Type u) [HasZero T] : OfNat T 0 where
-  ofNat := HasZero.zero
-
-instance (T : Type u) [HasOne T] : OfNat T 1 where
-  ofNat := HasOne.one
-
-postfix:max "⁻¹" => HasInv.inv
-
---------------------------------------------------------------------------------
-
-class Group (G : Type u) extends Mul G, HasOne G, HasInv G where
-  associative_law (x y z : G) : (x * y) * z = x * (y * z)
-  left_identity_law (x : G) : 1 * x = x
-  left_inverse_law (x : G) : x⁻¹ * x = 1
-
---------------------------------------------------------------------------------
-
-namespace Group
-
-variable {G : Type u} [Group G]
-
-theorem idempotent_is_identity {g : G} (H : g * g = g) : g = 1 := calc g
-  _ = 1 * g         := by rw [left_identity_law]
-  _ = (g⁻¹ * g) * g := by rw [left_inverse_law]
-  _ = g⁻¹ * (g * g) := by rw [associative_law]
-  _ = g⁻¹ * g       := by rw [H]
-  _ = 1             := by rw [left_inverse_law]
-
-theorem right_inverse_law (g : G) : g * g⁻¹ = 1 :=
-  idempotent_is_identity <| calc (g * g⁻¹) * (g * g⁻¹)
-    _ = g * (g⁻¹ * (g * g⁻¹)) := by rw [associative_law]
-    _ = g * ((g⁻¹ * g) * g⁻¹) := by rw [associative_law]
-    _ = g * (1 * g⁻¹)         := by rw [left_inverse_law]
-    _ = g * g⁻¹               := by rw [left_identity_law]
-
-theorem right_identity_law (g : G) : g * 1 = g := calc g * 1
-  _ = g * (g⁻¹ * g) := by rw [left_inverse_law]
-  _ = (g * g⁻¹) * g := by rw [associative_law]
-  _ = 1 * g         := by rw [right_inverse_law]
-  _ = g             := by rw [left_identity_law]
-
-end Group
+universe u v
 
 --------------------------------------------------------------------------------
 
