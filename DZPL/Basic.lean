@@ -82,15 +82,15 @@ class Field (F : Type u) extends CommutativeRing F, HasInv F where
 
 class PartiallyOrdered (P : Type u) extends LE P where
   reflexive_law (x : P) : x <= x
-  antisymmetry_law (x y : P) : x <= y -> y <= x -> x = y
-  transitive_law (x y z : P) : x <= y -> y <= z -> x <= z
+  antisymmetry_law (x y : P) : (x <= y) -> (y <= x) -> (x = y)
+  transitive_law (x y z : P) : (x <= y) -> (y <= z) -> (x <= z)
 
 class TotallyOrdered (T : Type u) extends PartiallyOrdered T where
   totality_law (x y : T) : (x <= y) ∨ (y <= x)
 
 class OrderedField (F : Type u) extends Field F, TotallyOrdered F where
   add_order_law {x y : F} (H : x <= y) (z : F) : x + z <= y + z
-  mul_order_law {x y : F} : 0 <= x -> 0 <= y -> 0 <= x * y
+  mul_order_law {x y : F} : (0 <= x) -> (0 <= y) -> (0 <= x * y)
 
 --------------------------------------------------------------------------------
 
