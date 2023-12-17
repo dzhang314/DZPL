@@ -1,7 +1,5 @@
 import DZPL.Notation
-
 set_option autoImplicit false
-
 universe u
 
 class Group (G : Type u) extends Mul G, HasOne G, HasInv G where

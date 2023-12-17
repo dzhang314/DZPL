@@ -1,5 +1,4 @@
 set_option autoImplicit false
-
 universe u
 
 class HasZero (T : Type u) where
