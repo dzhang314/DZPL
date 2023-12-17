@@ -1,45 +1,7 @@
 import DZPL.Notation
-
+import DZPL.AbelianGroup
 set_option autoImplicit false
-
-universe u v
-
---------------------------------------------------------------------------------
-
-class AbelianGroup (G : Type u) extends Add G, HasZero G, Neg G where
-  commutative_law (x y : G) : x + y = y + x
-  associative_law (x y z : G) : (x + y) + z = x + (y + z)
-  identity_law (x : G) : x + 0 = x
-  inverse_law (x : G) : x + -x = 0
-
---------------------------------------------------------------------------------
-
-namespace AbelianGroup
-
-variable {G : Type u} [AbelianGroup G]
-
-theorem idempotent_is_zero {x : G} (H : x + x = x) : x = 0 := calc x
-  _ = x + 0        := by rw [identity_law]
-  _ = x + (x + -x) := by rw [inverse_law]
-  _ = (x + x) + -x := by rw [associative_law]
-  _ = x + -x       := by rw [H]
-  _ = 0            := by rw [inverse_law]
-
-theorem sum_zero_implies_inverse {x y : G} (H : x + y = 0) : y = -x := calc y
-  _ = y + 0        := by rw [identity_law]
-  _ = y + (x + -x) := by rw [inverse_law]
-  _ = (y + x) + -x := by rw [associative_law]
-  _ = (x + y) + -x := by rw [commutative_law x y]
-  _ = 0 + -x       := by rw [H]
-  _ = -x + 0       := by rw [commutative_law]
-  _ = -x           := by rw [identity_law]
-
-theorem neg_is_involution (x : G) : -(-x) = x :=
-  Eq.symm <| sum_zero_implies_inverse <| calc -x + x
-    _ = x + -x := by rw [commutative_law]
-    _ = 0 := by rw [inverse_law]
-
-end AbelianGroup
+universe u
 
 --------------------------------------------------------------------------------
 
@@ -56,32 +18,31 @@ open AbelianGroup
 
 variable {R : Type u} [Rng R]
 
+@[simp]
 theorem left_zero_mul_law (x : R) : 0 * x = 0 :=
   idempotent_is_zero <| calc 0 * x + 0 * x
     _ = (0 + 0) * x := by rw [right_distributive_law]
     _ = 0 * x       := by rw [identity_law]
 
+@[simp]
 theorem right_zero_mul_law (x : R) : x * 0 = 0 :=
   idempotent_is_zero <| calc x * 0 + x * 0
     _ = x * (0 + 0) := by rw [left_distributive_law]
     _ = x * 0       := by rw [identity_law]
 
+@[simp]
 theorem left_neg_mul_law (x y : R) : -x * y = -(x * y) :=
-  sum_zero_implies_inverse <| calc x * y + -x * y
+  Eq.symm <| sum_zero_implies_inverse <| calc x * y + -x * y
     _ = (x + -x) * y := by rw [right_distributive_law]
     _ = 0 * y        := by rw [inverse_law]
     _ = 0            := by rw [left_zero_mul_law]
 
+@[simp]
 theorem right_neg_mul_law (x y : R) : x * -y = -(x * y) :=
-  sum_zero_implies_inverse <| calc x * y + x * -y
+  Eq.symm <| sum_zero_implies_inverse <| calc x * y + x * -y
     _ = x * (y + -y) := by rw [left_distributive_law]
     _ = x * 0        := by rw [inverse_law]
     _ = 0            := by rw [right_zero_mul_law]
-
-theorem neg_neg_mul_law (x y : R) : -x * -y = x * y := calc -x * -y
-  _ = -(x * -y)  := by rw [left_neg_mul_law]
-  _ = - -(x * y) := by rw [right_neg_mul_law]
-  _ = x * y      := by rw [neg_is_involution]
 
 end Rng
 
@@ -142,22 +103,22 @@ open TotallyOrdered
 
 variable {F : Type u} [OrderedField F]
 
-theorem square_is_positive (x : F) : 0 <= x * x := by
-  cases totality_law 0 x
-  . have H : 0 <= x := by assumption
-    exact mul_order_law H H
-  . have H : x <= 0 := by assumption
-    have lem : 0 <= -x := calc (0 : F)
-      _ = x + -x  := by rw [inverse_law]
-      _ <= 0 + -x := add_order_law H (-x)
-      _ = -x + 0  := by rw [commutative_law]
-      _ = -x      := by rw [identity_law]
-    rw [<- neg_neg_mul_law]
-    exact mul_order_law lem lem
+-- theorem square_is_positive (x : F) : 0 <= x * x := by
+--   cases totality_law 0 x
+--   . have H : 0 <= x := by assumption
+--     exact mul_order_law H H
+--   . have H : x <= 0 := by assumption
+--     have lem : 0 <= -x := calc (0 : F)
+--       _ = x + -x  := by rw [inverse_law]
+--       _ <= 0 + -x := add_order_law H (-x)
+--       _ = -x + 0  := by rw [commutative_law]
+--       _ = -x      := by rw [identity_law]
+--     rw [<- neg_neg_mul_law]
+--     exact mul_order_law lem lem
 
-theorem one_is_positive : (0 : F) <= (1 : F) := by
-  rw [<- left_identity_law 1]
-  exact square_is_positive 1
+-- theorem one_is_positive : (0 : F) <= (1 : F) := by
+--   rw [<- left_identity_law 1]
+--   exact square_is_positive 1
 
 end OrderedField
 
