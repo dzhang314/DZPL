@@ -1,6 +1,6 @@
-import DZPL.Notation
 import DZPL.AbelianGroup
 set_option autoImplicit false
+set_option linter.all true
 universe u
 
 --------------------------------------------------------------------------------
@@ -32,14 +32,14 @@ theorem right_zero_mul_law (x : R) : x * 0 = 0 :=
 
 @[simp]
 theorem left_neg_mul_law (x y : R) : -x * y = -(x * y) :=
-  Eq.symm <| sum_zero_implies_inverse <| calc x * y + -x * y
+  Eq.symm <| sum_zero_implies_negative <| calc x * y + -x * y
     _ = (x + -x) * y := by rw [right_distributive_law]
     _ = 0 * y        := by rw [inverse_law]
     _ = 0            := by rw [left_zero_mul_law]
 
 @[simp]
 theorem right_neg_mul_law (x y : R) : x * -y = -(x * y) :=
-  Eq.symm <| sum_zero_implies_inverse <| calc x * y + x * -y
+  Eq.symm <| sum_zero_implies_negative <| calc x * y + x * -y
     _ = x * (y + -y) := by rw [left_distributive_law]
     _ = x * 0        := by rw [inverse_law]
     _ = 0            := by rw [right_zero_mul_law]
@@ -48,7 +48,7 @@ end Rng
 
 --------------------------------------------------------------------------------
 
-class Ring (R : Type u) extends Rng R, HasOne R where
+class Ring (R : Type u) extends Rng R, One R where
   left_identity_law (x : R) : 1 * x = x
   right_identity_law (x : R) : x * 1 = x
 
@@ -74,7 +74,7 @@ end Ring
 class CommutativeRing (R : Type u) extends Ring R where
   mul_commutative_law (x y : R) : x * y = y * x
 
-class Field (F : Type u) extends CommutativeRing F, HasInv F where
+class Field (F : Type u) extends CommutativeRing F, Inv F where
   mul_inverse_law (x : F) : (x ≠ 0) -> x * x⁻¹ = 1
   inverse_zero_law : (0 : F)⁻¹ = 0
 
