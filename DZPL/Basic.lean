@@ -22,26 +22,26 @@ variable {R : Type u} [Rng R]
 theorem left_zero_mul_law (x : R) : 0 * x = 0 :=
   idempotent_is_zero <| calc 0 * x + 0 * x
     _ = (0 + 0) * x := by rw [right_distributive_law]
-    _ = 0 * x       := by rw [identity_law]
+    _ = 0 * x       := by rw [zero_law]
 
 @[simp]
 theorem right_zero_mul_law (x : R) : x * 0 = 0 :=
   idempotent_is_zero <| calc x * 0 + x * 0
     _ = x * (0 + 0) := by rw [left_distributive_law]
-    _ = x * 0       := by rw [identity_law]
+    _ = x * 0       := by rw [zero_law]
 
 @[simp]
 theorem left_neg_mul_law (x y : R) : -x * y = -(x * y) :=
   Eq.symm <| sum_zero_implies_negative <| calc x * y + -x * y
     _ = (x + -x) * y := by rw [right_distributive_law]
-    _ = 0 * y        := by rw [inverse_law]
+    _ = 0 * y        := by rw [negative_law]
     _ = 0            := by rw [left_zero_mul_law]
 
 @[simp]
 theorem right_neg_mul_law (x y : R) : x * -y = -(x * y) :=
   Eq.symm <| sum_zero_implies_negative <| calc x * y + x * -y
     _ = x * (y + -y) := by rw [left_distributive_law]
-    _ = x * 0        := by rw [inverse_law]
+    _ = x * 0        := by rw [negative_law]
     _ = 0            := by rw [right_zero_mul_law]
 
 end Rng
@@ -143,7 +143,7 @@ def IsConstant (x : R) := δ x = 0
 theorem zero_is_constant : IsConstant (0 : R) :=
   idempotent_is_zero <| calc δ (0 : R) + δ (0 : R)
     _ = δ ((0 : R) + (0 : R)) := by rw [additive_law]
-    _ = δ (0 : R)             := by rw [identity_law]
+    _ = δ (0 : R)             := by rw [zero_law]
 
 theorem one_is_constant : IsConstant (1 : R) :=
   idempotent_is_zero <| calc δ (1 : R) + δ (1 : R)
