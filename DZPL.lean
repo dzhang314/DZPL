@@ -1,3 +1,11 @@
--- This module serves as the root of the `DZPL` library.
--- Import modules here that should be built as part of the library.
-import «DZPL».Basic
+import «DZPL».Group
+import «DZPL».AbelianGroup
+import «DZPL».Rng
+import «DZPL».Ring
+import «DZPL».CommutativeRing
+import «DZPL».Field
+import «DZPL».DifferentialRng
+import «DZPL».DifferentialRing
+
+import «DZPL».PartiallyOrdered
+import «DZPL».TotallyOrdered
