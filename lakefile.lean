@@ -1,8 +1,7 @@
 import Lake
 open Lake DSL
 
-package «DZPL» where
-  -- add package configuration options here
+package «DZPL»
 
-lean_lib «DZPL» where
-  -- add library configuration options here
+@[default_target]
+lean_lib «DZPL»
