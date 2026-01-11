@@ -3,7 +3,7 @@ set_option linter.all true
 universe u
 
 /-- A group is a type `G` with a multiplication operation (`Mul G`) that is
-    associative, has an identity (`One G`), and has inverses (`Inv G`). -/
+    associative, has an identity (`One G`), and admits inverses (`Inv G`). -/
 class Group (G : Type u) extends Mul G, One G, Inv G where
   /-- Multiplication in a group is associative. -/
   associative_law (x y z : G) : (x * y) * z = x * (y * z)
@@ -44,6 +44,8 @@ theorem right_identity_law (x : G) : x * 1 = x := calc x * 1
   _ = 1 * x         := right_inverse_law x |> congrArg (· * x)
   _ = x             := left_identity_law x
 
+/-- In a group, if the product of two elements is `1`, then one is the inverse
+    of the other. -/
 theorem product_one_implies_inverse {x y : G} (H : x * y = 1) : x⁻¹ = y :=
   calc x⁻¹
     _ = x⁻¹ * 1       := (right_identity_law x⁻¹).symm

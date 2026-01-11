@@ -3,7 +3,7 @@ set_option linter.all true
 universe u
 
 /-- An abelian group is a type `G` with an addition operation (`Add G`) that is
-    commutative, associative, has an identity (`Zero G`), and has inverses
+    commutative, associative, has an identity (`Zero G`), and admits inverses
     (`Neg G`). -/
 class AbelianGroup (G : Type u) extends Add G, Zero G, Neg G where
   /-- Addition in an abelian group is commutative. -/
@@ -30,6 +30,8 @@ theorem idempotent_is_zero {x : G} (H : x + x = x) : x = 0 := calc x
   _ = x + -x       := H |> congrArg (· + (-x))
   _ = 0            := negative_law x
 
+/-- In an abelian group, if the sum of two elements is `0`, then one is the
+    negative of the other. -/
 theorem sum_zero_implies_negative {x y : G} (H : x + y = 0) : -x = y := calc -x
   _ = -x + 0       := (zero_law (-x)).symm
   _ = -x + (x + y) := H.symm |> congrArg (-x + ·)
