@@ -21,28 +21,28 @@ variable {R : Type u} [Rng R]
 @[simp]
 theorem left_zero_mul_law (x : R) : 0 * x = 0 :=
   idempotent_is_zero <| calc 0 * x + 0 * x
-    _ = (0 + 0) * x := by rw [right_distributive_law]
-    _ = 0 * x       := by rw [zero_law]
+    _ = (0 + 0) * x := (right_distributive_law 0 0 x).symm
+    _ = 0 * x       := zero_law 0 |> congrArg (· * x)
 
 @[simp]
 theorem right_zero_mul_law (x : R) : x * 0 = 0 :=
   idempotent_is_zero <| calc x * 0 + x * 0
-    _ = x * (0 + 0) := by rw [left_distributive_law]
-    _ = x * 0       := by rw [zero_law]
+    _ = x * (0 + 0) := (left_distributive_law x 0 0).symm
+    _ = x * 0       := zero_law 0 |> congrArg (x * ·)
 
 @[simp]
 theorem left_neg_mul_law (x y : R) : -x * y = -(x * y) :=
   Eq.symm <| sum_zero_implies_negative <| calc x * y + -x * y
-    _ = (x + -x) * y := by rw [right_distributive_law]
-    _ = 0 * y        := by rw [negative_law]
-    _ = 0            := by rw [left_zero_mul_law]
+    _ = (x + -x) * y := (right_distributive_law x (-x) y).symm
+    _ = 0 * y        := negative_law x |> congrArg (· * y)
+    _ = 0            := left_zero_mul_law y
 
 @[simp]
 theorem right_neg_mul_law (x y : R) : x * -y = -(x * y) :=
   Eq.symm <| sum_zero_implies_negative <| calc x * y + x * -y
-    _ = x * (y + -y) := by rw [left_distributive_law]
-    _ = x * 0        := by rw [negative_law]
-    _ = 0            := by rw [right_zero_mul_law]
+    _ = x * (y + -y) := (left_distributive_law x y (-y)).symm
+    _ = x * 0        := negative_law y |> congrArg (x * ·)
+    _ = 0            := right_zero_mul_law x
 
 end Rng
 
@@ -60,12 +60,11 @@ open Rng
 
 variable {R : Type u} [Ring R]
 
-theorem collapse_law : (0 : R) = (1 : R) -> ∀ x : R, x = 0 := by
-  intro H x
-  calc x
-    _ = 1 * x := by rw [left_identity_law]
-    _ = 0 * x := by rw [H]
-    _ = 0     := by rw [left_zero_mul_law]
+theorem collapse_law : (0 : R) = (1 : R) -> ∀ x : R, x = 0 :=
+  fun H x => calc x
+    _ = 1 * x := (left_identity_law x).symm
+    _ = 0 * x := H.symm |> congrArg (· * x)
+    _ = 0     := left_zero_mul_law x
 
 end Ring
 
@@ -124,32 +123,45 @@ end OrderedField
 
 --------------------------------------------------------------------------------
 
-class DifferentialRing (R : Type u) extends Ring R where
+class DifferentialRng (R : Type u) extends Rng R where
   δ : R -> R
   additive_law (x y : R) : δ (x + y) = δ x + δ y
   product_law (x y : R) : δ (x * y) = δ x * y + x * δ y
 
+class DifferentialRing (R : Type u) extends DifferentialRng R, Ring R
+
 --------------------------------------------------------------------------------
+
+namespace DifferentialRng
+
+open AbelianGroup
+
+variable {R : Type u} [DifferentialRng R]
+
+def DifferentialConstant (x : R) := δ x = 0
+
+theorem zero_is_constant : DifferentialConstant (0 : R) :=
+  idempotent_is_zero <| calc δ (0 : R) + δ (0 : R)
+    _ = δ (0 + 0) := (additive_law 0 0).symm
+    _ = δ 0       := zero_law 0 |> congrArg δ
+
+end DifferentialRng
 
 namespace DifferentialRing
 
 open AbelianGroup
+open DifferentialRng
 open Ring
 
 variable {R : Type u} [DifferentialRing R]
 
-def IsConstant (x : R) := δ x = 0
-
-theorem zero_is_constant : IsConstant (0 : R) :=
-  idempotent_is_zero <| calc δ (0 : R) + δ (0 : R)
-    _ = δ ((0 : R) + (0 : R)) := by rw [additive_law]
-    _ = δ (0 : R)             := by rw [zero_law]
-
-theorem one_is_constant : IsConstant (1 : R) :=
+theorem one_is_constant : DifferentialConstant (1 : R) :=
   idempotent_is_zero <| calc δ (1 : R) + δ (1 : R)
-    _ = δ (1 : R) * 1 + δ (1 : R)     := by rw [right_identity_law]
-    _ = δ (1 : R) * 1 + 1 * δ (1 : R) := by rw [left_identity_law]
-    _ = δ ((1 : R) * (1 : R))         := by rw [product_law]
-    _ = δ (1 : R)                     := by rw [left_identity_law]
+    _ = δ 1 * 1 + δ 1     := (right_identity_law (δ 1)).symm
+                             |> congrArg (· + δ 1)
+    _ = δ 1 * 1 + 1 * δ 1 := (left_identity_law (δ 1)).symm
+                             |> congrArg (δ 1 * 1 + ·)
+    _ = δ (1 * 1)         := (product_law 1 1).symm
+    _ = δ 1               := left_identity_law 1 |> congrArg δ
 
 end DifferentialRing
