@@ -14,3 +14,12 @@ class PartiallyOrdered (P : Type u) extends LE P where
       and the last two are comparable in the same direction, then the first and
       last must also be comparable in that direction. -/
   transitive_law (x y z : P) : (x <= y) -> (y <= z) -> (x <= z)
+
+namespace PartiallyOrdered
+
+variable {P : Type u} [PartiallyOrdered P]
+
+instance : LT P where
+  lt x y := x <= y ∧ x ≠ y
+
+end PartiallyOrdered
