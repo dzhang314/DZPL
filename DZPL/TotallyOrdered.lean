@@ -7,4 +7,4 @@ universe u
     (`PartiallyOrdered T`) and every pair of elements is comparable. -/
 class TotallyOrdered (T : Type u) extends PartiallyOrdered T where
   /-- Every pair of elements in a total order is comparable. -/
-  totality_law (x y : T) : (x <= y) ∨ (y <= x)
+  totality_law (x y : T) : (x ≤ y) ∨ (y ≤ x)
