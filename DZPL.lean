@@ -9,3 +9,4 @@ import «DZPL».DifferentialRing
 
 import «DZPL».PartiallyOrdered
 import «DZPL».TotallyOrdered
+import «DZPL».OrderedRng
