@@ -16,7 +16,7 @@ open Ring
 
 variable {R : Type u} [DifferentialRing R]
 
-/-- `1` is a constant. -/
+/-- `1` is a constant in every differential ring. -/
 theorem one_is_constant : Constant (1 : R) :=
   idempotent_is_zero <| calc δ (1 : R) + δ (1 : R)
     _ = δ 1 * 1 + δ 1     := right_identity_law (δ 1) |> Eq.symm

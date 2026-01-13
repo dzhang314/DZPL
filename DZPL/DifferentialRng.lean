@@ -22,7 +22,7 @@ variable {R : Type u} [DifferentialRng R]
 /-- An element of a differential rng is a constant if its derivative is `0`. -/
 def Constant (x : R) := δ x = 0
 
-/-- `0` is a constant. -/
+/-- `0` is a constant in every differential rng. -/
 theorem zero_is_constant : Constant (0 : R) :=
   idempotent_is_zero <| calc δ (0 : R) + δ (0 : R)
     _ = δ (0 + 0) := additive_law 0 0 |> Eq.symm
