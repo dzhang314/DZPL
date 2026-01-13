@@ -11,7 +11,7 @@ class DifferentialRng (R : Type u) extends Rng R where
   /-- The derivation in a differential rng is additive. -/
   additive_law (x y : R) : δ (x + y) = δ x + δ y
   /-- The derivation in a differential rng satisfies the Leibniz rule. -/
-  leibniz_rule (x y : R) : δ (x * y) = δ x * y + x * δ y
+  product_law (x y : R) : δ (x * y) = δ x * y + x * δ y
 
 namespace DifferentialRng
 

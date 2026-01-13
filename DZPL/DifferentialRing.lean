@@ -23,7 +23,7 @@ theorem one_is_constant : Constant (1 : R) :=
                              |> congrArg (· + δ 1)
     _ = δ 1 * 1 + 1 * δ 1 := (left_identity_law (δ 1)).symm
                              |> congrArg (δ 1 * 1 + ·)
-    _ = δ (1 * 1)         := (leibniz_rule 1 1).symm
+    _ = δ (1 * 1)         := (product_law 1 1).symm
     _ = δ 1               := left_identity_law 1 |> congrArg δ
 
 end DifferentialRing
