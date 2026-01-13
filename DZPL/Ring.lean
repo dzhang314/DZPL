@@ -105,3 +105,14 @@ theorem embed_nat_mul (R : Type u) [Ring R] (m n : Nat) :
             := rfl)
 
 end Ring
+
+namespace Ring
+
+/-- Natural number `n` is the characteristic of ring `R` if `n` is the smallest
+    positive natural number such that `embed_nat R n = 0`, or `n = 0` if no
+    such positive natural number exists. -/
+def HasCharacteristic (R : Type u) [Ring R] (n : Nat) : Prop :=
+  (n = 0 ∧ ∀ m : Nat, m > 0 -> embed_nat R m ≠ 0) ∨
+  (n > 0 ∧ embed_nat R n = 0 ∧ ∀ m : Nat, 0 < m ∧ m < n -> embed_nat R m ≠ 0)
+
+end Ring
