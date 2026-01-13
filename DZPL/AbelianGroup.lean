@@ -24,18 +24,18 @@ variable {G : Type u} [AbelianGroup G]
 /-- An element `x` of an abelian group is idempotent if `x + x = x`.
     The only idempotent element in any abelian group is `0`. -/
 theorem idempotent_is_zero {x : G} (H : x + x = x) : x = 0 := calc x
-  _ = x + 0        := (zero_law x).symm
-  _ = x + (x + -x) := (negative_law x).symm |> congrArg (x + ·)
-  _ = (x + x) + -x := (associative_law x x (-x)).symm
+  _ = x + 0        := zero_law x |> Eq.symm
+  _ = x + (x + -x) := negative_law x |> Eq.symm |> congrArg (x + ·)
+  _ = (x + x) + -x := associative_law x x (-x) |> Eq.symm
   _ = x + -x       := H |> congrArg (· + (-x))
   _ = 0            := negative_law x
 
 /-- In an abelian group, if the sum of two elements is `0`, then one is the
     negative of the other. -/
 theorem sum_zero_implies_negative {x y : G} (H : x + y = 0) : -x = y := calc -x
-  _ = -x + 0       := (zero_law (-x)).symm
-  _ = -x + (x + y) := H.symm |> congrArg (-x + ·)
-  _ = (-x + x) + y := (associative_law (-x) x y).symm
+  _ = -x + 0       := zero_law (-x) |> Eq.symm
+  _ = -x + (x + y) := H |> Eq.symm |> congrArg (-x + ·)
+  _ = (-x + x) + y := associative_law (-x) x y |> Eq.symm
   _ = (x + -x) + y := commutative_law (-x) x |> congrArg (· + y)
   _ = 0 + y        := negative_law x |> congrArg (· + y)
   _ = y + 0        := commutative_law 0 y
@@ -53,7 +53,7 @@ theorem negative_of_sum (x y : G) : -(x + y) = -x + -y :=
     _ = x + (y + (-x + -y)) := associative_law x y (-x + -y)
     _ = x + (y + (-y + -x)) := commutative_law (-x) (-y)
                                |> congrArg (y + ·) |> congrArg (x + ·)
-    _ = x + ((y + -y) + -x) := (associative_law y (-y) (-x)).symm
+    _ = x + ((y + -y) + -x) := associative_law y (-y) (-x) |> Eq.symm
                                |> congrArg (x + ·)
     _ = x + (0 + -x)        := negative_law y
                                |> congrArg (· + -x) |> congrArg (x + ·)

@@ -25,7 +25,7 @@ def Constant (x : R) := δ x = 0
 /-- `0` is a constant. -/
 theorem zero_is_constant : Constant (0 : R) :=
   idempotent_is_zero <| calc δ (0 : R) + δ (0 : R)
-    _ = δ (0 + 0) := (additive_law 0 0).symm
+    _ = δ (0 + 0) := additive_law 0 0 |> Eq.symm
     _ = δ 0       := zero_law 0 |> congrArg δ
 
 end DifferentialRng

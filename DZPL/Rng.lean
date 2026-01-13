@@ -23,20 +23,20 @@ variable {R : Type u} [Rng R]
 /-- In a rng, left multiplication by `0` yields `0`. -/
 theorem mul_zero_left (x : R) : 0 * x = 0 :=
   idempotent_is_zero <| calc 0 * x + 0 * x
-    _ = (0 + 0) * x := (right_distributive_law 0 0 x).symm
+    _ = (0 + 0) * x := right_distributive_law 0 0 x |> Eq.symm
     _ = 0 * x       := zero_law 0 |> congrArg (· * x)
 
 /-- In a rng, right multiplication by `0` yields `0`. -/
 theorem mul_zero_right (x : R) : x * 0 = 0 :=
   idempotent_is_zero <| calc x * 0 + x * 0
-    _ = x * (0 + 0) := (left_distributive_law x 0 0).symm
+    _ = x * (0 + 0) := left_distributive_law x 0 0 |> Eq.symm
     _ = x * 0       := zero_law 0 |> congrArg (x * ·)
 
 /-- In a rng, a product with a negative on the left is the negative of the
     product. -/
 theorem mul_neg_left (x y : R) : -x * y = -(x * y) :=
   Eq.symm <| sum_zero_implies_negative <| calc x * y + -x * y
-    _ = (x + -x) * y := (right_distributive_law x (-x) y).symm
+    _ = (x + -x) * y := right_distributive_law x (-x) y |> Eq.symm
     _ = 0 * y        := negative_law x |> congrArg (· * y)
     _ = 0            := mul_zero_left y
 
@@ -44,7 +44,7 @@ theorem mul_neg_left (x y : R) : -x * y = -(x * y) :=
     product. -/
 theorem mul_neg_right (x y : R) : x * -y = -(x * y) :=
   Eq.symm <| sum_zero_implies_negative <| calc x * y + x * -y
-    _ = x * (y + -y) := (left_distributive_law x y (-y)).symm
+    _ = x * (y + -y) := left_distributive_law x y (-y) |> Eq.symm
     _ = x * 0        := negative_law y |> congrArg (x * ·)
     _ = 0            := mul_zero_right x
 

@@ -23,8 +23,8 @@ variable {R : Type u} [Ring R]
 /-- If `0 = 1` in a ring, then the ring is a zero ring. -/
 theorem zero_ring_law : (0 : R) = (1 : R) -> ZeroRing R :=
   fun (H : 0 = 1) (x : R) => calc x
-    _ = 1 * x := (left_identity_law x).symm
-    _ = 0 * x := H.symm |> congrArg (· * x)
+    _ = 1 * x := left_identity_law x |> Eq.symm
+    _ = 0 * x := H |> Eq.symm |> congrArg (· * x)
     _ = 0     := mul_zero_left x
 
 end Ring
