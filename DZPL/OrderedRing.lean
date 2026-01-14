@@ -1,0 +1,24 @@
+import DZPL.OrderedRng
+import DZPL.Ring
+set_option autoImplicit false
+set_option linter.all true
+universe u
+
+/-- An ordered ring is an ordered rng (`OrderedRng R`) that is also a nonzero
+    ring (`Ring R`). -/
+class OrderedRing (R : Type u) extends OrderedRng R, Ring R where
+  /-- The zero ring is not considered an ordered ring. -/
+  nonzero_law : (0 : R) ≠ (1 : R)
+
+namespace OrderedRing
+
+open OrderedRng
+
+variable {R : Type u} [OrderedRing R]
+
+theorem zero_le_one : (0 : R) ≤ (1 : R) :=
+  trans (square_nonnegative (1 : R)) (left_identity_law (1 : R))
+
+theorem zero_lt_one : (0 : R) < (1 : R) := And.intro zero_le_one nonzero_law
+
+end OrderedRing

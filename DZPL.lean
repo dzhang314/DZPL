@@ -1,3 +1,5 @@
+import «DZPL».CountHeartbeats
+
 import «DZPL».Group
 import «DZPL».AbelianGroup
 import «DZPL».Rng
@@ -10,3 +12,4 @@ import «DZPL».DifferentialRing
 import «DZPL».PartiallyOrdered
 import «DZPL».TotallyOrdered
 import «DZPL».OrderedRng
+import «DZPL».OrderedRing
