@@ -4,6 +4,7 @@
         "antisymmetry",
         "congr",
         "DZPL",
+        "elab",
         "Mathlib",
         "succ",
         "symm",
