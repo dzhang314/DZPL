@@ -56,32 +56,39 @@ theorem embed_nat_one (R : Type u) [Ring R] : embed_nat R 1 = (1 : R) :=
 theorem embed_nat_add (R : Type u) [Ring R] (m n : Nat) :
   embed_nat R (m + n) = (embed_nat R m) + (embed_nat R n) :=
   match n with
-  | Nat.zero => calc embed_nat R (m + 0)
-    _ = embed_nat R m                 := rfl
-    _ = embed_nat R m + (0 : R)       := zero_law (embed_nat R m) |> Eq.symm
-    _ = embed_nat R m + embed_nat R 0 := rfl
-  | Nat.succ k => calc embed_nat R (m + k + 1)
+  | Nat.zero => calc embed_nat R (m + Nat.zero)
+    _ = embed_nat R m
+        := rfl
+    _ = embed_nat R m + (0 : R)
+        := zero_law (embed_nat R m) |> Eq.symm
+    _ = embed_nat R m + embed_nat R Nat.zero
+        := rfl
+  | Nat.succ k => calc embed_nat R (m + (Nat.succ k))
+    _ = embed_nat R (Nat.succ (m + k))
+        := rfl
     _ = embed_nat R (m + k) + (1 : R)
         := rfl
     _ = (embed_nat R m + embed_nat R k) + (1 : R)
         := embed_nat_add R m k |> congrArg (· + (1 : R))
     _ = embed_nat R m + (embed_nat R k + (1 : R))
         := associative_law (embed_nat R m) (embed_nat R k) (1 : R)
-    _ = embed_nat R m + embed_nat R (k + 1)
+    _ = embed_nat R m + embed_nat R (Nat.succ k)
         := rfl
 
 /-- Embedding natural numbers into a ring preserves multiplication. --/
 theorem embed_nat_mul (R : Type u) [Ring R] (m n : Nat) :
   embed_nat R (m * n) = embed_nat R m * embed_nat R n :=
   match n with
-  | Nat.zero => calc embed_nat R (m * 0)
+  | Nat.zero => calc embed_nat R (m * Nat.zero)
+    _ = embed_nat R Nat.zero
+        := rfl
     _ = (0 : R)
         := rfl
     _ = embed_nat R m * (0 : R)
         := mul_zero_right (embed_nat R m) |> Eq.symm
-    _ = embed_nat R m * embed_nat R 0
+    _ = embed_nat R m * embed_nat R Nat.zero
         := rfl
-  | Nat.succ k => calc embed_nat R (m * (k + 1))
+  | Nat.succ k => calc embed_nat R (m * (Nat.succ k))
     _ = embed_nat R (m * k + m)
         := rfl
     _ = embed_nat R (m * k) + embed_nat R m
@@ -94,7 +101,30 @@ theorem embed_nat_mul (R : Type u) [Ring R] (m n : Nat) :
     _ = embed_nat R m * (embed_nat R k + (1 : R))
         := left_distributive_law (embed_nat R m) (embed_nat R k) (1 : R)
            |> Eq.symm
-    _ = embed_nat R m * embed_nat R (k + 1)
+    _ = embed_nat R m * embed_nat R (Nat.succ k)
         := rfl
+
+/-- Embed an integer into a ring `R` by repeatedly adding `1 : R` and negating
+    if necessary. -/
+def embed_int (R : Type u) [Ring R] : Int → R
+  | Int.ofNat n   => embed_nat R n
+  | Int.negSucc n => -(embed_nat R (Nat.succ n))
+
+/-- Embedding the integer `0 : Int` into a ring `R` yields `0 : R`. -/
+theorem embed_int_zero (R : Type u) [Ring R] : embed_int R 0 = (0 : R) := rfl
+
+/-- Embedding the integer `1 : Int` into a ring `R` yields `1 : R`. -/
+theorem embed_int_one (R : Type u) [Ring R] : embed_int R 1 = (1 : R) :=
+  embed_nat_one R
+
+/-- Embedding integers into a ring preserves negation. -/
+theorem embed_int_neg (R : Type u) [Ring R] (x : Int) :
+  embed_int R (-x) = -(embed_int R x) :=
+  match x with
+  | Int.ofNat Nat.zero     => sum_zero_implies_negative (zero_law (0 : R))
+                              |> Eq.symm
+  | Int.ofNat (Nat.succ _) => rfl
+  | Int.negSucc k          => negation_is_involution (embed_nat R (Nat.succ k))
+                              |> Eq.symm
 
 end Ring
