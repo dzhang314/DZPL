@@ -75,7 +75,7 @@ theorem embed_nat_add (R : Type u) [Ring R] (m n : Nat) :
     _ = embed_nat R m + embed_nat R (Nat.succ k)
         := rfl
 
-/-- Embedding natural numbers into a ring preserves multiplication. --/
+/-- Embedding natural numbers into a ring preserves multiplication. -/
 theorem embed_nat_mul (R : Type u) [Ring R] (m n : Nat) :
   embed_nat R (m * n) = embed_nat R m * embed_nat R n :=
   match n with

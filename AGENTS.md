@@ -45,11 +45,11 @@ Each file should begin with:
 ```lean
 set_option autoImplicit false
 set_option linter.all true
-universe u
 ```
 
-The number of universes should be minimized. So far, no file has needed more
-than one universe.
+If universes are needed, the line `universe u` should immediately follow this
+header. The number of universes should be minimized. So far, no file has needed
+more than one universe.
 
 ### 4. Naming Conventions
 
@@ -72,8 +72,9 @@ Theorem names should be descriptive phrases:
 
 ### 5. Documentation
 
-Every class, class field, definition, and theorem should have an attached
-docstring explaining its meaning. Use `/-- ... -/` syntax.
+Every named class, class field, definition, and theorem must have an attached
+docstring explaining its meaning. Use `/-- ... -/` syntax. Anonymous instances
+may lack documentation.
 
 #### 5a. Class documentation
 
