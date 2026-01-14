@@ -172,22 +172,32 @@ Include brief explanatory comments before key proof steps:
 have le : x + z ≤ y + z := ...
 ```
 
+### Explicitly annotate literals
+
+Whenever the literals `0` and `1` are used to refer to the identity elements of
+an algebraic structure, explicitly annotate them with the structure type:
+```lean
+x + (0 : G)
+x * (1 : R)
+```
+This is not necessary when `0` and `1` are used as a `Nat` or `Int`.
+
 ### Prefer `calc` over `have`
 
 Whenever possible, use `calc` blocks instead of intermediate `have` statements:
 ```lean
 -- Prefer: direct `calc` chain
-theorem idempotent_is_zero {x : G} (H : x + x = x) : x = 0 := calc x
-  _ = x + 0        := zero_law x |> Eq.symm
+theorem idempotent_is_zero {x : G} (H : x + x = x) : x = (0 : G) := calc x
+  _ = x + (0 : G)  := zero_law x |> Eq.symm
   _ = x + (x + -x) := negative_law x |> Eq.symm |> congrArg (x + ·)
   _ = (x + x) + -x := associative_law x x (-x) |> Eq.symm
   _ = x + -x       := H |> congrArg (· + -x)
-  _ = 0            := negative_law x
+  _ = (0 : G)      := negative_law x
 
 -- Avoid: unnecessary intermediate `have` statements
-theorem idempotent_is_zero {x : G} (H : x + x = x) : x = 0 :=
-  have step1 : x = x + 0 := zero_law x |> Eq.symm
-  have step2 : x + 0 = x + (x + -x) := ...
+theorem idempotent_is_zero {x : G} (H : x + x = x) : x = (0 : G) :=
+  have step1 : x = x + (0 : G) := zero_law x |> Eq.symm
+  have step2 : x + (0 : G) = x + (x + -x) := ...
   ...
 ```
 
@@ -203,7 +213,7 @@ negative_law y |> Eq.symm |> congrArg (x + ·)
 
 Use the pipe operator to chain multiple `congrArg` applications:
 ```lean
--- Transform deeply nested subexpression
+-- Transform deeply nested expression
 some_equality |> congrArg (· + z) |> congrArg (x + ·)
 ```
 

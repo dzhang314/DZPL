@@ -16,14 +16,18 @@ open Ring
 
 variable {R : Type u} [DifferentialRing R]
 
-/-- `1` is a constant in every differential ring. -/
+/-- `1 : R` is a constant in every differential ring. -/
 theorem one_is_constant : Constant (1 : R) :=
   idempotent_is_zero <| calc δ (1 : R) + δ (1 : R)
-    _ = δ 1 * 1 + δ 1     := right_identity_law (δ 1) |> Eq.symm
-                             |> congrArg (· + δ 1)
-    _ = δ 1 * 1 + 1 * δ 1 := left_identity_law (δ 1) |> Eq.symm
-                             |> congrArg (δ 1 * 1 + ·)
-    _ = δ (1 * 1)         := product_law 1 1 |> Eq.symm
-    _ = δ 1               := left_identity_law 1 |> congrArg δ
+    _ = δ (1 : R) * (1 : R) + δ (1 : R)
+        := right_identity_law (δ (1 : R)) |> Eq.symm
+           |> congrArg (· + δ (1 : R))
+    _ = δ (1 : R) * (1 : R) + (1 : R) * δ (1 : R)
+        := left_identity_law (δ (1 : R)) |> Eq.symm
+           |> congrArg (δ (1 : R) * (1 : R) + ·)
+    _ = δ ((1 : R) * (1 : R))
+        := product_law (1 : R) (1 : R) |> Eq.symm
+    _ = δ (1 : R)
+        := left_identity_law (1 : R) |> congrArg δ
 
 end DifferentialRing

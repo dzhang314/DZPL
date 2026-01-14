@@ -7,6 +7,6 @@ universe u
     element has a multiplicative inverse (`Inv F`). -/
 class Field (F : Type u) extends CommutativeRing F, Inv F where
   /-- Every nonzero element of a field has a multiplicative inverse. -/
-  mul_inverse_law (x : F) : (x ≠ 0) -> x * x⁻¹ = 1
+  mul_inverse_law (x : F) : (x ≠ (0 : F)) -> x * x⁻¹ = (1 : F)
   /-- In a field, the inverse of `0` is defined to be `0`. -/
   zero_inverse_law : (0 : F)⁻¹ = 0
