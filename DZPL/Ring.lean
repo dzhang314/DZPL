@@ -153,7 +153,31 @@ theorem embed_int_neg (R : Type u) [Ring R] (x : Int) :
 /-- Embedding integers into a ring preserves subtraction. -/
 theorem embed_int_subNatNat (R : Type u) [Ring R] (m n : Nat) :
     embed_int R (subNatNat m n) = embed_nat R m + -(embed_nat R n) :=
-  sorry
+  match Nat.lt_or_ge m n with
+  | Or.inl (H : m < n) => calc embed_int R (subNatNat m n)
+    _ = embed_int R (negSucc (pred (n - m)))
+        := subNatNat_of_lt H |> congrArg (embed_int R)
+    _ = -(embed_nat R (succ (pred (n - m))))
+        := rfl
+    _ = -(embed_nat R (n - m))
+        := Nat.succ_pred_eq_of_pos (Nat.sub_pos_of_lt H)
+           |> congrArg (embed_nat R) |> congrArg (-·)
+    _ = -(embed_nat R n + -(embed_nat R m))
+        := embed_nat_sub R (Nat.le_of_lt H) |> congrArg (-·)
+    _ = -(embed_nat R n) + -(-(embed_nat R m))
+        := negative_of_sum (embed_nat R n) (-(embed_nat R m))
+    _ = -(embed_nat R n) + embed_nat R m
+        := negation_is_involution (embed_nat R m)
+           |> congrArg (-(embed_nat R n) + ·)
+    _ = embed_nat R m + -(embed_nat R n)
+        := commutative_law (-(embed_nat R n)) (embed_nat R m)
+  | Or.inr (H : n ≤ m) => calc embed_int R (subNatNat m n)
+    _ = embed_int R (ofNat (m - n))
+        := congrArg (embed_int R) (subNatNat_of_le H)
+    _ = embed_nat R (m - n)
+        := rfl
+    _ = embed_nat R m + -(embed_nat R n)
+        := embed_nat_sub R H
 
 /-- Embedding integers into a ring preserves addition. -/
 theorem embed_int_add (R : Type u) [Ring R] (x y : Int) :
@@ -163,21 +187,20 @@ theorem embed_int_add (R : Type u) [Ring R] (x y : Int) :
   | ofNat m,   negSucc n => embed_int_subNatNat R m (succ n)
   | negSucc m, ofNat n   => embed_int_subNatNat R n (succ m) ▸
     commutative_law (embed_int R (ofNat n)) (embed_int R (negSucc m))
-  | negSucc m, negSucc n =>
-    calc embed_int R (negSucc m + negSucc n)
-      _ = embed_int R (negSucc (succ (m + n)))
-          := rfl
-      _ = -(embed_nat R (succ (m + succ n)))
-          := rfl
-      _ = -(embed_nat R (succ m + succ n))
-          := Nat.succ_add m (succ n) |> Eq.symm
-             |> congrArg (embed_nat R) |> congrArg (-·)
-      _ = -(embed_nat R (succ m) + embed_nat R (succ n))
-          := embed_nat_add R (succ m) (succ n) |> congrArg (-·)
-      _ = -(embed_nat R (succ m)) + -(embed_nat R (succ n))
-          := negative_of_sum (embed_nat R (succ m)) (embed_nat R (succ n))
-      _ = embed_int R (negSucc m) + embed_int R (negSucc n)
-          := rfl
+  | negSucc m, negSucc n => calc embed_int R (negSucc m + negSucc n)
+    _ = embed_int R (negSucc (succ (m + n)))
+        := rfl
+    _ = -(embed_nat R (succ (m + succ n)))
+        := rfl
+    _ = -(embed_nat R (succ m + succ n))
+        := Nat.succ_add m (succ n) |> Eq.symm
+           |> congrArg (embed_nat R) |> congrArg (-·)
+    _ = -(embed_nat R (succ m) + embed_nat R (succ n))
+        := embed_nat_add R (succ m) (succ n) |> congrArg (-·)
+    _ = -(embed_nat R (succ m)) + -(embed_nat R (succ n))
+        := negative_of_sum (embed_nat R (succ m)) (embed_nat R (succ n))
+    _ = embed_int R (negSucc m) + embed_int R (negSucc n)
+        := rfl
 
 /-- Embedding integers into a ring preserves multiplication. -/
 theorem embed_int_mul (R : Type u) [Ring R] (x y : Int) :
@@ -207,11 +230,16 @@ theorem embed_int_mul (R : Type u) [Ring R] (x y : Int) :
     _ = embed_int R (negSucc m) * embed_int R (ofNat n)
         := rfl
   | negSucc m, negSucc n => calc embed_int R (negSucc m * negSucc n)
+    _ = embed_int R (ofNat (succ m * succ n))
+        := rfl
     _ = embed_nat R (succ m * succ n)
         := rfl
     _ = embed_nat R (succ m) * embed_nat R (succ n)
         := embed_nat_mul R (succ m) (succ n)
     _ = -(embed_nat R (succ m)) * -(embed_nat R (succ n))
-        := product_of_negatives (embed_nat R (succ m)) (embed_nat R (succ n)) |> Eq.symm
+        := product_of_negatives (embed_nat R (succ m)) (embed_nat R (succ n))
+           |> Eq.symm
+    _ = embed_int R (negSucc m) * embed_int R (negSucc n)
+        := rfl
 
 end Ring
