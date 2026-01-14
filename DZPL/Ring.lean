@@ -55,53 +55,46 @@ theorem embed_nat_one (R : Type u) [Ring R] : embed_nat R 1 = (1 : R) :=
 /-- Embedding natural numbers into a ring preserves addition. -/
 theorem embed_nat_add (R : Type u) [Ring R] (m n : Nat) :
   embed_nat R (m + n) = (embed_nat R m) + (embed_nat R n) :=
-  Nat.recOn n
-    (calc embed_nat R (m + 0)
-      _ = embed_nat R m
-          := rfl
-      _ = embed_nat R m + (0 : R)
-          := zero_law (embed_nat R m) |> Eq.symm
-      _ = embed_nat R m + embed_nat R 0
-          := rfl)
-    (fun (k : Nat)
-         (IH : embed_nat R (m + k) = embed_nat R m + embed_nat R k) =>
-      calc embed_nat R (m + k + 1)
-        _ = embed_nat R (m + k) + (1 : R)
-            := rfl
-        _ = (embed_nat R m + embed_nat R k) + (1 : R)
-            := IH |> congrArg (· + (1 : R))
-        _ = embed_nat R m + (embed_nat R k + (1 : R))
-            := associative_law (embed_nat R m) (embed_nat R k) (1 : R)
-        _ = embed_nat R m + embed_nat R (k + 1)
-            := rfl)
+  match n with
+  | Nat.zero => calc embed_nat R (m + 0)
+    _ = embed_nat R m                 := rfl
+    _ = embed_nat R m + (0 : R)       := zero_law (embed_nat R m) |> Eq.symm
+    _ = embed_nat R m + embed_nat R 0 := rfl
+  | Nat.succ k => calc embed_nat R (m + k + 1)
+    _ = embed_nat R (m + k) + (1 : R)
+        := rfl
+    _ = (embed_nat R m + embed_nat R k) + (1 : R)
+        := embed_nat_add R m k |> congrArg (· + (1 : R))
+    _ = embed_nat R m + (embed_nat R k + (1 : R))
+        := associative_law (embed_nat R m) (embed_nat R k) (1 : R)
+    _ = embed_nat R m + embed_nat R (k + 1)
+        := rfl
 
 /-- Embedding natural numbers into a ring preserves multiplication. --/
 theorem embed_nat_mul (R : Type u) [Ring R] (m n : Nat) :
   embed_nat R (m * n) = embed_nat R m * embed_nat R n :=
-  Nat.recOn n
-    (calc embed_nat R (m * 0)
-      _ = (0 : R)
-          := rfl
-      _ = embed_nat R m * (0 : R)
-          := mul_zero_right (embed_nat R m) |> Eq.symm
-      _ = embed_nat R m * embed_nat R 0
-          := rfl)
-    (fun (k : Nat)
-         (IH : embed_nat R (m * k) = embed_nat R m * embed_nat R k) =>
-      calc embed_nat R (m * (k + 1))
-        _ = embed_nat R (m * k + m)
-            := rfl
-        _ = embed_nat R (m * k) + embed_nat R m
-            := embed_nat_add R (m * k) m
-        _ = embed_nat R m * embed_nat R k + embed_nat R m
-            := IH |> congrArg (· + embed_nat R m)
-        _ = embed_nat R m * embed_nat R k + embed_nat R m * (1 : R)
-            := right_identity_law (embed_nat R m)
-               |> Eq.symm |> congrArg (embed_nat R m * embed_nat R k + ·)
-        _ = embed_nat R m * (embed_nat R k + (1 : R))
-            := left_distributive_law (embed_nat R m) (embed_nat R k) (1 : R)
-               |> Eq.symm
-        _ = embed_nat R m * embed_nat R (k + 1)
-            := rfl)
+  match n with
+  | Nat.zero => calc embed_nat R (m * 0)
+    _ = (0 : R)
+        := rfl
+    _ = embed_nat R m * (0 : R)
+        := mul_zero_right (embed_nat R m) |> Eq.symm
+    _ = embed_nat R m * embed_nat R 0
+        := rfl
+  | Nat.succ k => calc embed_nat R (m * (k + 1))
+    _ = embed_nat R (m * k + m)
+        := rfl
+    _ = embed_nat R (m * k) + embed_nat R m
+        := embed_nat_add R (m * k) m
+    _ = embed_nat R m * embed_nat R k + embed_nat R m
+        := embed_nat_mul R m k |> congrArg (· + embed_nat R m)
+    _ = embed_nat R m * embed_nat R k + embed_nat R m * (1 : R)
+        := right_identity_law (embed_nat R m)
+           |> Eq.symm |> congrArg (embed_nat R m * embed_nat R k + ·)
+    _ = embed_nat R m * (embed_nat R k + (1 : R))
+        := left_distributive_law (embed_nat R m) (embed_nat R k) (1 : R)
+           |> Eq.symm
+    _ = embed_nat R m * embed_nat R (k + 1)
+        := rfl
 
 end Ring
