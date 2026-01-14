@@ -44,7 +44,7 @@ theorem sum_zero_implies_negative {x y : G} (H : x + y = (0 : G)) : -x = y :=
 
 /-- In an abelian group, negating twice yields the original element. -/
 theorem negation_is_involution (x : G) : -(-x) = x :=
-  sum_zero_implies_negative (Eq.rec (commutative_law (-x) x) (negative_law x))
+  sum_zero_implies_negative (commutative_law (-x) x ▸ negative_law x)
 
 /-- In an abelian group, the negative of a sum is the sum of the negatives. -/
 theorem negative_of_sum (x y : G) : -(x + y) = -x + -y :=

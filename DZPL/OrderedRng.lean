@@ -53,6 +53,6 @@ theorem square_is_nonnegative (x : R) : (0 : R) ≤ x * x :=
       _ ≤ (0 : R) + -x := add_order_law (-x) H
       _ = -x + (0 : R) := commutative_law (0 : R) (-x)
       _ = -x           := zero_law (-x)
-    Eq.rec (mul_order_law neg neg) (product_of_negatives x x)
+    mul_order_law neg neg ▸ product_of_negatives x x
 
 end OrderedRng
