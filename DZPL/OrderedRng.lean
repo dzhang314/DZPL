@@ -49,10 +49,10 @@ theorem square_nonnegative (x : R) : 0 ≤ x * x :=
   -- If `x ≤ 0`, apply `mul_order_law` with `mul_neg_neg`.
   | Or.inr (H : x ≤ 0) =>
     have neg : 0 ≤ -x := calc 0
-      _ = x + -x  := negative_law x |> Eq.symm
-      _ ≤ 0 + -x  := add_order_law (-x) H
-      _ = -x + 0  := commutative_law 0 (-x)
-      _ = -x      := zero_law (-x)
+      _ = x + -x := negative_law x |> Eq.symm
+      _ ≤ 0 + -x := add_order_law (-x) H
+      _ = -x + 0 := commutative_law 0 (-x)
+      _ = -x     := zero_law (-x)
     Eq.rec (mul_order_law neg neg) (mul_neg_neg x x)
 
 end OrderedRng
