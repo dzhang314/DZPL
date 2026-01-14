@@ -17,10 +17,11 @@ open OrderedRng
 variable {R : Type u} [OrderedRing R]
 
 /-- In an ordered ring, zero is less than or equal to one. -/
-theorem zero_le_one : (0 : R) ≤ (1 : R) :=
-  trans (square_nonnegative (1 : R)) (left_identity_law (1 : R))
+theorem one_is_nonnegative : (0 : R) ≤ (1 : R) :=
+  trans (square_is_nonnegative (1 : R)) (left_identity_law (1 : R))
 
 /-- In an ordered ring, zero is strictly less than one. -/
-theorem zero_lt_one : (0 : R) < (1 : R) := And.intro zero_le_one nonzero_law
+theorem one_is_positive : (0 : R) < (1 : R) :=
+  And.intro one_is_nonnegative nonzero_law
 
 end OrderedRing

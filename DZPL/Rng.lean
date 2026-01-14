@@ -49,9 +49,10 @@ theorem mul_neg_right (x y : R) : x * -y = -(x * y) :=
     _ = 0            := mul_zero_right x
 
 /-- In a rng, a product of two negatives is the product of the elements. -/
-theorem mul_neg_neg (x y : R) : (-x) * (-y) = x * y := calc (-x) * (-y)
-  _ = -(x * -y)   := mul_neg_left x (-y)
-  _ = -(-(x * y)) := mul_neg_right x y |> congrArg (-·)
-  _ = x * y       := negation_is_involution (x * y)
+theorem product_of_negatives (x y : R) : (-x) * (-y) = x * y :=
+  calc (-x) * (-y)
+    _ = -(x * -y)   := mul_neg_left x (-y)
+    _ = -(-(x * y)) := mul_neg_right x y |> congrArg (-·)
+    _ = x * y       := negation_is_involution (x * y)
 
 end Rng

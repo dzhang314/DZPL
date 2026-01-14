@@ -41,18 +41,18 @@ theorem strict_add_order_law {x y : R} (z : R) (H : x < y) : (x + z < y + z) :=
   And.intro le ne
 
 /-- In an ordered rng, the square of any element is nonnegative. -/
-theorem square_nonnegative (x : R) : 0 ≤ x * x :=
+theorem square_is_nonnegative (x : R) : 0 ≤ x * x :=
   -- By totality, either `0 ≤ x` or `x ≤ 0`.
   match totality_law 0 x with
   -- If `0 ≤ x`, apply `mul_order_law` directly.
   | Or.inl (H : 0 ≤ x) => mul_order_law H H
-  -- If `x ≤ 0`, apply `mul_order_law` with `mul_neg_neg`.
+  -- If `x ≤ 0`, apply `mul_order_law` with `product_of_negatives`.
   | Or.inr (H : x ≤ 0) =>
     have neg : 0 ≤ -x := calc 0
       _ = x + -x := negative_law x |> Eq.symm
       _ ≤ 0 + -x := add_order_law (-x) H
       _ = -x + 0 := commutative_law 0 (-x)
       _ = -x     := zero_law (-x)
-    Eq.rec (mul_order_law neg neg) (mul_neg_neg x x)
+    Eq.rec (mul_order_law neg neg) (product_of_negatives x x)
 
 end OrderedRng
