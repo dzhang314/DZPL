@@ -18,7 +18,7 @@ variable {R : Type u} [OrderedRing R]
 
 /-- In an ordered ring, zero is less than or equal to one. -/
 theorem one_is_nonnegative : (0 : R) ≤ (1 : R) :=
-  trans (square_is_nonnegative (1 : R)) (left_identity_law (1 : R))
+  Eq.rec (square_is_nonnegative (1 : R)) (left_identity_law (1 : R))
 
 /-- In an ordered ring, zero is strictly less than one. -/
 theorem one_is_positive : (0 : R) < (1 : R) :=
