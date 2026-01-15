@@ -18,6 +18,18 @@ open Rng
 
 variable {D : Type u} [DivisionRing D]
 
+/-- In a division ring, if a product is `0`, then a factor must be `0`. -/
+theorem zero_product_law {x y : D} (H : x * y = (0 : D)) :
+    (x = (0 : D)) ∨ (y = (0 : D)) :=
+  match left_inverse_law x with
+  | Or.inl (Hx : x = (0 : D))       => Or.inl Hx
+  | Or.inr (Hx : x⁻¹ * x = (1 : D)) => Or.inr <| calc y
+    _ = (1 : D) * y   := left_identity_law y |> Eq.symm
+    _ = (x⁻¹ * x) * y := Hx |> Eq.symm |> congrArg (· * y)
+    _ = x⁻¹ * (x * y) := mul_associative_law x⁻¹ x y
+    _ = x⁻¹ * (0 : D) := H |> congrArg (x⁻¹ * ·)
+    _ = (0 : D)       := mul_zero_right x⁻¹
+
 private theorem zero_ring_lemma {x : D} (H : (0 : D) * x = (1 : D)) (y z : D) :
     y = z :=
   have zero_ring : ZeroRing D := zero_ring_law (mul_zero_left x ▸ H)
