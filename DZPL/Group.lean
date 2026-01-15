@@ -37,6 +37,21 @@ theorem right_inverse_law (x : G) : x * x⁻¹ = (1 : G) :=
                                  |> congrArg (· * x⁻¹) |> congrArg (x * ·)
     _ = x * x⁻¹               := left_identity_law x⁻¹ |> congrArg (x * ·)
 
+-- The following alternative proof of `right_inverse_law` is longer but does
+-- not require `idempotent_is_identity`.
+example (x : G) : x * x⁻¹ = (1 : G) := calc x * x⁻¹
+  _ = (1 : G) * (x * x⁻¹)         := left_identity_law (x * x⁻¹) |> Eq.symm
+  _ = ((x⁻¹)⁻¹ * x⁻¹) * (x * x⁻¹) := left_inverse_law x⁻¹ |> Eq.symm
+                                     |> congrArg (· * (x * x⁻¹))
+  _ = (x⁻¹)⁻¹ * (x⁻¹ * (x * x⁻¹)) := associative_law (x⁻¹)⁻¹ x⁻¹ (x * x⁻¹)
+  _ = (x⁻¹)⁻¹ * ((x⁻¹ * x) * x⁻¹) := associative_law x⁻¹ x x⁻¹ |> Eq.symm
+                                     |> congrArg ((x⁻¹)⁻¹ * ·)
+  _ = (x⁻¹)⁻¹ * ((1 : G) * x⁻¹)   := left_inverse_law x |> congrArg (· * x⁻¹)
+                                     |> congrArg ((x⁻¹)⁻¹ * ·)
+  _ = (x⁻¹)⁻¹ * x⁻¹               := left_identity_law x⁻¹
+                                     |> congrArg ((x⁻¹)⁻¹ * ·)
+  _ = (1 : G)                     := left_inverse_law x⁻¹
+
 /-- Right multiplication by `1` leaves every element of a group unchanged. -/
 theorem right_identity_law (x : G) : x * (1 : G) = x := calc x * (1 : G)
   _ = x * (x⁻¹ * x) := left_inverse_law x |> Eq.symm |> congrArg (x * ·)
