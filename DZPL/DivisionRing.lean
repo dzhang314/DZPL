@@ -71,4 +71,32 @@ theorem product_one_implies_inverse {x y : D} (H : x * y = (1 : D)) : x⁻¹ = y
     _ = (1 : D) * y   := Hx |> congrArg (· * y)
     _ = y             := left_identity_law y
 
+/-- In a division ring, the inverse of a product is the product of the inverses
+    in reverse order. -/
+theorem inverse_of_product (x y : D) : (x * y)⁻¹ = y⁻¹ * x⁻¹ :=
+  match right_inverse_law x, right_inverse_law y with
+  | Or.inl Hx, _         => calc (x * y)⁻¹
+    _ = ((0 : D) * y)⁻¹ := Hx |> congrArg (· * y) |> congrArg (·⁻¹)
+    _ = (0 : D)⁻¹       := mul_zero_left y |> congrArg (·⁻¹)
+    _ = (0 : D)         := zero_inverse_law
+    _ = y⁻¹ * (0 : D)   := mul_zero_right y⁻¹ |> Eq.symm
+    _ = y⁻¹ * (0 : D)⁻¹ := zero_inverse_law |> Eq.symm |> congrArg (y⁻¹ * ·)
+    _ = y⁻¹ * x⁻¹       := Hx |> Eq.symm |> congrArg (y⁻¹ * ·⁻¹)
+  | _,         Or.inl Hy => calc (x * y)⁻¹
+    _ = (x * (0 : D))⁻¹ := Hy |> congrArg (x * ·) |> congrArg (·⁻¹)
+    _ = (0 : D)⁻¹       := mul_zero_right x |> congrArg (·⁻¹)
+    _ = (0 : D)         := zero_inverse_law
+    _ = (0 : D) * x⁻¹   := mul_zero_left x⁻¹ |> Eq.symm
+    _ = (0 : D)⁻¹ * x⁻¹ := zero_inverse_law |> Eq.symm |> congrArg (· * x⁻¹)
+    _ = y⁻¹ * x⁻¹       := Hy |> Eq.symm |> congrArg (·⁻¹ * x⁻¹)
+  | Or.inr Hx, Or.inr Hy =>
+    product_one_implies_inverse <| calc (x * y) * (y⁻¹ * x⁻¹)
+      _ = x * (y * (y⁻¹ * x⁻¹))   := mul_associative_law x y (y⁻¹ * x⁻¹)
+      _ = x * ((y * y⁻¹) * x⁻¹)   := mul_associative_law y y⁻¹ x⁻¹
+                                     |> Eq.symm |> congrArg (x * ·)
+      _ = x * ((1 : D) * x⁻¹)     := Hy
+                                     |> congrArg (· * x⁻¹) |> congrArg (x * ·)
+      _ = x * x⁻¹                 := left_identity_law x⁻¹ |> congrArg (x * ·)
+      _ = (1 : D)                 := Hx
+
 end DivisionRing
