@@ -56,7 +56,7 @@ theorem embed_nat_one (R : Type u) [Ring R] : embed_nat R 1 = (1 : R) :=
 
 /-- Embedding natural numbers into a ring preserves addition. -/
 theorem embed_nat_add (R : Type u) [Ring R] (m n : Nat) :
-    embed_nat R (m + n) = (embed_nat R m) + (embed_nat R n) :=
+    embed_nat R (m + n) = embed_nat R m + embed_nat R n :=
   match n with
   | zero   => calc embed_nat R (m + zero)
     _ = embed_nat R m                    := rfl
