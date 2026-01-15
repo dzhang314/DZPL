@@ -201,6 +201,28 @@ theorem idempotent_is_zero {x : G} (H : x + x = x) : x = (0 : G) :=
   ...
 ```
 
+### Explicit definition unfolding in `calc` blocks
+
+Use explicit `rfl` steps to unfold and refold definitions in `calc` blocks:
+
+1. **Unfold at the start**: If the starting expression needs definition
+   expansion to proceed, add `rfl` steps to make each unfolding explicit.
+2. **Refold at the end**: The final line of a `calc` block should be
+   syntactically identical to the goal. Add `rfl` steps to "refold" definitions
+   as necessary.
+
+```lean
+-- The goal is: embed_nat R (m * n) = embed_nat R m * embed_nat R n
+| zero => calc embed_nat R (m * zero)
+  _ = embed_nat R zero             := rfl   -- unfold: m * zero = zero
+  _ = (0 : R)                      := rfl   -- unfold: embed_nat R zero = 0
+  _ = embed_nat R m * (0 : R)      := mul_zero_right (embed_nat R m) |> Eq.symm
+  _ = embed_nat R m * embed_nat R zero := rfl   -- refold to match goal
+```
+
+This makes each definitional equality visible as a proof step, rather than
+relying on Lean's implicit unification.
+
 ### Applying an equality inside an expression
 
 Use `congrArg` with an anonymous function:
