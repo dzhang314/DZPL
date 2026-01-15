@@ -74,7 +74,7 @@ end Group
 
 namespace Group
 
-/-- In a group, the inverse of `1 : G` is `1 : G`. --/
+/-- In a group, the inverse of `1 : G` is `1 : G`. -/
 theorem inverse_of_one (G : Type u) [Group G] : (1 : G)⁻¹ = (1 : G) :=
   product_one_implies_inverse (left_identity_law (1 : G))
 

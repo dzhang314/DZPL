@@ -64,7 +64,7 @@ end AbelianGroup
 
 namespace AbelianGroup
 
-/-- In an abelian group, the negative of `0 : G` is `0 : G`. --/
+/-- In an abelian group, the negative of `0 : G` is `0 : G`. -/
 theorem negative_of_zero (G : Type u) [AbelianGroup G] : -(0 : G) = (0 : G) :=
   sum_zero_implies_negative (zero_law (0 : G))
 
