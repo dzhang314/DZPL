@@ -37,7 +37,7 @@ open AbelianGroup
 open Rng
 
 /-- Embed a natural number into a ring `R` by repeatedly adding `1 : R`. -/
-def embed_nat (R : Type u) [Ring R] : Nat → R
+def embed_nat (R : Type u) [Ring R] : Nat -> R
   | zero   => (0 : R)
   | succ n => (embed_nat R n) + (1 : R)
 
@@ -125,7 +125,7 @@ theorem embed_nat_mul (R : Type u) [Ring R] (m n : Nat) :
 
 /-- Embed an integer into a ring `R` by repeatedly adding `1 : R` and negating
     if necessary. -/
-def embed_int (R : Type u) [Ring R] : Int → R
+def embed_int (R : Type u) [Ring R] : Int -> R
   | ofNat n   => embed_nat R n
   | negSucc n => -(embed_nat R (succ n))
 
