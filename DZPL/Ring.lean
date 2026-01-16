@@ -76,7 +76,26 @@ theorem embed_nat_add (R : Type u) [Ring R] (m n : Nat) :
     _ = embed_nat R m + embed_nat R (succ k)
         := rfl
 
-/-
+private theorem embed_nat_sub_helper
+    (R : Type u) [Ring R] {m n : Nat} (H : m ≤ n) :
+    embed_nat R (n - m) + embed_nat R m = embed_nat R n :=
+  match m, n with
+  | zero,   n      => zero_law (embed_nat R n)
+  | succ a, succ b => calc embed_nat R (succ b - succ a) + embed_nat R (succ a)
+    _ = embed_nat R (b - a) + embed_nat R (succ a)
+        := Nat.succ_sub_succ_eq_sub b a
+           |> congrArg (embed_nat R) |> congrArg (· + embed_nat R (succ a))
+    _ = embed_nat R (b - a) + (embed_nat R a + (1 : R))
+        := rfl
+    _ = (embed_nat R (b - a) + embed_nat R a) + (1 : R)
+        := associative_law (embed_nat R (b - a)) (embed_nat R a) (1 : R)
+           |> Eq.symm
+    _ = embed_nat R b + (1 : R)
+        := embed_nat_sub_helper R (Nat.le_of_succ_le_succ H)
+           |> congrArg (· + (1 : R))
+    _ = embed_nat R (succ b)
+        := rfl
+
 /-- Embedding natural numbers into a ring preserves subtraction. -/
 theorem embed_nat_sub (R : Type u) [Ring R] {m n : Nat} (H : m ≤ n) :
     embed_nat R (n - m) = embed_nat R n + -(embed_nat R m) :=
@@ -90,13 +109,8 @@ theorem embed_nat_sub (R : Type u) [Ring R] {m n : Nat} (H : m ≤ n) :
         := associative_law
              (embed_nat R (n - m)) (embed_nat R m) (-(embed_nat R m))
            |> Eq.symm
-    _ = embed_nat R (n - m + m) + -(embed_nat R m)
-        := embed_nat_add R (n - m) m
-           |> Eq.symm |> congrArg (· + -(embed_nat R m))
     _ = embed_nat R n + -(embed_nat R m)
-        := Nat.sub_add_cancel H
-           |> congrArg (embed_nat R) |> congrArg (· + -(embed_nat R m))
--/
+        := embed_nat_sub_helper R H |> congrArg (· + -(embed_nat R m))
 
 /-- Embedding natural numbers into a ring preserves multiplication. -/
 theorem embed_nat_mul (R : Type u) [Ring R] (m n : Nat) :
