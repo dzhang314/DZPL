@@ -32,6 +32,7 @@ theorem zero_product_law {x y : D} (H : x * y = (0 : D)) :
     _ = x⁻¹ * (0 : D) := H |> congrArg (x⁻¹ * ·)
     _ = (0 : D)       := mul_zero_right x⁻¹
 
+/-- In a ring, if `0 * x = 1` for some `x`, then all elements are equal. -/
 private theorem zero_ring_lemma {x : D} (H : (0 : D) * x = (1 : D)) (y z : D) :
     y = z :=
   have zero_ring : ZeroRing D := zero_ring_law (mul_zero_left x ▸ H)
