@@ -43,7 +43,10 @@ example {x : G} (H : x + x = x) : x = 0 := by
 
 Each file should begin with:
 ```lean
+import DZPL.AxiomFree
+-- add other imports here if necessary
 set_option autoImplicit false
+set_option DZPL.axiomFree true
 set_option linter.all true
 ```
 

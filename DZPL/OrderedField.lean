@@ -1,6 +1,8 @@
+import DZPL.AxiomFree
 import DZPL.OrderedRing
 import DZPL.Field
 set_option autoImplicit false
+set_option DZPL.axiomFree true
 set_option linter.all true
 universe u
 

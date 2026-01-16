@@ -1,6 +1,8 @@
+import DZPL.AxiomFree
 import DZPL.DifferentialRng
 import DZPL.Ring
 set_option autoImplicit false
+set_option DZPL.axiomFree true
 set_option linter.all true
 universe u
 

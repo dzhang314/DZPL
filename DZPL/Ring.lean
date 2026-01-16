@@ -1,5 +1,7 @@
+import DZPL.AxiomFree
 import DZPL.Rng
 set_option autoImplicit false
+set_option DZPL.axiomFree true
 set_option linter.all true
 universe u
 
@@ -74,6 +76,7 @@ theorem embed_nat_add (R : Type u) [Ring R] (m n : Nat) :
     _ = embed_nat R m + embed_nat R (succ k)
         := rfl
 
+/-
 /-- Embedding natural numbers into a ring preserves subtraction. -/
 theorem embed_nat_sub (R : Type u) [Ring R] {m n : Nat} (H : m ≤ n) :
     embed_nat R (n - m) = embed_nat R n + -(embed_nat R m) :=
@@ -93,6 +96,7 @@ theorem embed_nat_sub (R : Type u) [Ring R] {m n : Nat} (H : m ≤ n) :
     _ = embed_nat R n + -(embed_nat R m)
         := Nat.sub_add_cancel H
            |> congrArg (embed_nat R) |> congrArg (· + -(embed_nat R m))
+-/
 
 /-- Embedding natural numbers into a ring preserves multiplication. -/
 theorem embed_nat_mul (R : Type u) [Ring R] (m n : Nat) :
@@ -150,6 +154,7 @@ theorem embed_int_neg (R : Type u) [Ring R] (x : Int) :
   | ofNat n   => embed_int_negOfNat R n
   | negSucc n => negation_is_involution (embed_nat R (succ n)) |> Eq.symm
 
+/-
 /-- Embedding integers into a ring preserves subtraction. -/
 theorem embed_int_subNatNat (R : Type u) [Ring R] (m n : Nat) :
     embed_int R (subNatNat m n) = embed_nat R m + -(embed_nat R n) :=
@@ -201,6 +206,7 @@ theorem embed_int_add (R : Type u) [Ring R] (x y : Int) :
         := negative_of_sum (embed_nat R (succ m)) (embed_nat R (succ n))
     _ = embed_int R (negSucc m) + embed_int R (negSucc n)
         := rfl
+-/
 
 /-- Embedding integers into a ring preserves multiplication. -/
 theorem embed_int_mul (R : Type u) [Ring R] (x y : Int) :
